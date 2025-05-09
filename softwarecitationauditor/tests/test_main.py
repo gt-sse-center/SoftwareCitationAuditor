@@ -5,23 +5,21 @@ from softwarecitationauditor import main
 def test_process_paper(monkeypatch):
     called = []
 
-    def fake_process_paper(pdf_input):
+    def fake_process_paper(pdf_input, provider, model):
         called.append(pdf_input)
 
     monkeypatch.setattr(main, "process_paper", fake_process_paper)
-    main.process_paper("dummy.pdf")
-
+    main.process_paper("dummy.pdf", "openai", "gpt-3.5-turbo")
     assert "dummy.pdf" in called
 
 def test_cli_with_input_file(monkeypatch):
-    # Create temp input file
     with tempfile.NamedTemporaryFile(mode='w+', delete=False) as f:
         f.write("file1.pdf\nfile2.pdf\n")
         file_name = f.name
 
     called = []
 
-    def fake_process_paper(pdf_input):
+    def fake_process_paper(pdf_input, provider, model):
         called.append(pdf_input)
 
     monkeypatch.setattr(main, "process_paper", fake_process_paper)
@@ -35,7 +33,7 @@ def test_cli_with_input_file(monkeypatch):
 def test_cli_with_single_pdf(monkeypatch):
     called = []
 
-    def fake_process_paper(pdf_input):
+    def fake_process_paper(pdf_input, provider, model):
         called.append(pdf_input)
 
     monkeypatch.setattr(main, "process_paper", fake_process_paper)
