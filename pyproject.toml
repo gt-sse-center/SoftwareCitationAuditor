@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "softwarecitationauditor"
+version = "0.1.0"
+description = "A tool to extract software mentions and check their citations in scientific papers using OpenAI API"
+authors = [{ name = "Your Name", email = "your@email.com" }]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pdfminer.six",
+    "PyMuPDF",
+    "requests",
+    "openai",
+    "anthropic",
+    "google-generativeai",
+    "tqdm"
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-mock"]
+
+[project.scripts]
+softwarecitationauditor = "softwarecitationauditor.main:cli"
+
+[tool.setuptools.packages.find]
+include = ["softwarecitationauditor"]
+exclude = ["downloads", "reports"]
+
+[tool.setuptools.package-data]
+softwarecitationauditor = ["prompt.in"]

@@ -1,0 +1,9 @@
+Given the following paper body and bibliography, extract the softwares used in the paper and check if they are properly cited.
+
+Body:
+{{BODY_TEXT}}
+
+Bibliography:
+{{BIBLIOGRAPHY_TEXT}}
+
+Return the result as a Markdown table with columns: Software, Citation Provided?, Reference ID(s)
