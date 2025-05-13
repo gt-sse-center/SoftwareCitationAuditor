@@ -16,7 +16,8 @@ dependencies = [
     "openai",
     "anthropic",
     "google-generativeai",
-    "tqdm"
+    "tqdm",
+    "ollama"
 ]
 
 [project.optional-dependencies]

@@ -14,7 +14,7 @@ def cli():
     parser = argparse.ArgumentParser(description="GT SSE Software Citation Checker")
     parser.add_argument('pdf', nargs='?', help='Single PDF file path or URL')
     parser.add_argument('--input-file', '-i', help='Path to text file with list of PDF URLs or paths (one per line)')
-    parser.add_argument('--provider', '-p', default='openai', choices=['openai', 'claude', 'gemini'], help='Provider: openai, claude, gemini (default: openai)')
+    parser.add_argument('--provider', '-p', default='openai', choices=['openai', 'claude', 'gemini', 'ollama'], help='Provider: openai, claude, gemini, ollama (default: openai)')
     parser.add_argument('--model', '-m', default='gpt-3.5-turbo', help='Model to use (default: gpt-3.5-turbo)')
     args = parser.parse_args()
 
