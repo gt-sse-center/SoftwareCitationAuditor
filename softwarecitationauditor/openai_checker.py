@@ -15,8 +15,8 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
     report_name = os.path.join("reports", f"{base_name}_report.md")
 
     prompt_template = load_prompt_template()
-    prompt = prompt_template.replace("{{BODY_TEXT}}", body_text[:4000]) \
-                            .replace("{{BIBLIOGRAPHY_TEXT}}", bibliography_text[:4000])
+    prompt = prompt_template.replace("{{BODY_TEXT}}", body_text) \
+                            .replace("{{BIBLIOGRAPHY_TEXT}}", bibliography_text)
 
     answer = ""
     if provider == "openai":
@@ -41,6 +41,22 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
         client = client or genai.GenerativeModel(model)
         response = client.generate_content(prompt)
         answer = response.text
+    elif provider == "ollama":
+        import ollama
+
+        client = client or ollama
+        model = model or "llama3"
+
+        try:
+            response = client.chat(
+                model=model,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            answer = response["message"]["content"]
+        except Exception as e:
+            raise RuntimeError(f"Ollama REST call failed: {e}")
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
