@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A tool to extract software mentions and check their citations in scientific papers using OpenAI API"
 authors = [{ name = "Your Name", email = "your@email.com" }]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "pdfminer.six",
     "PyMuPDF",
@@ -16,7 +16,9 @@ dependencies = [
     "openai",
     "anthropic",
     "google-generativeai",
-    "tqdm"
+    "tqdm",
+    "ollama",
+    "typer>=0.15.3",
 ]
 
 [project.optional-dependencies]
