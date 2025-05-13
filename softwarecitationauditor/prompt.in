@@ -6,4 +6,4 @@ Body:
 Bibliography:
 {{BIBLIOGRAPHY_TEXT}}
 
-Return the result as a Markdown table with columns: Software, Citation Provided?, Reference ID(s)
+Return the result as only a Markdown table with columns: Software, Citation Provided?, Reference ID(s)
