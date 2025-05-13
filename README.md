@@ -82,11 +82,15 @@ You can switch providers and models using:
   softwarecitationauditor --provider gemini --model gemini-1.5-pro https://arxiv.org/pdf/2304.12345.pdf
   ```
 
-✅ **Note:** You must set the correct API keys:
+- Ollama
+  ```
+  ```
+
+✅ **Note:** You must set the correct API keys or install LLAMA3 using ollama:
 - `OPENAI_API_KEY`
 - `ANTHROPIC_API_KEY`
 - `GEMINI_API_KEY`
-
+- Use command ```ollama install llama3``` to pull llama3 model with ollama API end point.
 ---
 
 ## ✍️ Custom Prompt
