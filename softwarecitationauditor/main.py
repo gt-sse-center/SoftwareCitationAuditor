@@ -11,6 +11,7 @@ def process_paper(pdf_input, provider, model):
     pdf_file = download_pdf(pdf_input)
     body_text, bibliography = extract_text_from_pdf(pdf_file)
     extract_and_check_software(body_text, bibliography, pdf_file, provider, model)
+    os.remove(pdf_file)  # Clean up the downloaded PDF file
 
 @app.command()
 def audit(

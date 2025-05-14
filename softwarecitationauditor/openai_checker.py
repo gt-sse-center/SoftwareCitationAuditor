@@ -61,5 +61,6 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
         raise ValueError(f"Unknown provider: {provider}")
 
     with open(report_name, "w") as f:
-        f.write(answer)
+        print(answer)
+        #f.write(answer)
     print(f"✅ Report generated: {report_name}")
