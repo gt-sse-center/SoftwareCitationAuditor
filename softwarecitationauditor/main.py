@@ -1,4 +1,5 @@
 import sys
+import os
 import typer
 from tqdm import tqdm
 from .downloader import download_pdf
