@@ -15,7 +15,7 @@ def extract_text_from_pdf(pdf_path):
             break
 
     if split_pos != -1:
-        body = full_text[:split_pos]
+        body = full_text
         biblio = full_text[split_pos + len(keyword):]
     else:
         body = full_text

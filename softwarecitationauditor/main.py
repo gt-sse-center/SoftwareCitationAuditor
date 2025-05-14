@@ -1,5 +1,6 @@
 import sys
 import argparse
+import os
 from tqdm import tqdm
 from .downloader import download_pdf
 from .extractor import extract_text_from_pdf
@@ -9,6 +10,7 @@ def process_paper(pdf_input, provider, model):
     pdf_file = download_pdf(pdf_input)
     body_text, bibliography = extract_text_from_pdf(pdf_file)
     extract_and_check_software(body_text, bibliography, pdf_file, provider, model)
+    os.remove(pdf_file)  # Clean up the downloaded PDF file
 
 def cli():
     parser = argparse.ArgumentParser(description="GT SSE Software Citation Checker")
