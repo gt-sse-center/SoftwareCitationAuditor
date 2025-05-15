@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 import typer
 from tqdm import tqdm
 from .downloader import download_pdf
@@ -11,7 +12,8 @@ def process_paper(pdf_input, provider, model):
     pdf_file = download_pdf(pdf_input)
     body_text, bibliography = extract_text_from_pdf(pdf_file)
     extract_and_check_software(body_text, bibliography, pdf_file, provider, model)
-
+    Path(pdf_file).unlink()  # Clean up the downloaded PDF
+    
 @app.command()
 def audit(
     pdf: str = typer.Argument(None, help="Single PDF path or URL."),
