@@ -2,9 +2,9 @@ import fitz  # PyMuPDF
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
-    full_text = ""
-    for page in doc:
-        full_text += page.get_text()
+    pages = [page.get_text() for page in doc]
+    full_text = "\n".join(pages)
+    
 
     # Try to find 'References' heading with various formats
     split_keywords = ["\nReferences\n", "\nREFERENCES\n", "\nBibliography\n"]

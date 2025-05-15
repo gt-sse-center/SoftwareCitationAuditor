@@ -62,5 +62,5 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
 
     with open(report_name, "w") as f:
         print(answer)
-        #f.write(answer)
+        f.write(answer)
     print(f"✅ Report generated: {report_name}")
