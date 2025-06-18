@@ -5,7 +5,7 @@ from colorama import Fore, Style, init as colorama_init
 colorama_init()
 from .downloader import download_pdf
 from .extractor import extract_text_from_pdf
-from .openai_checker import extract_and_check_software
+from .checker import extract_and_check_software
 
 app = typer.Typer(help="Audit software mentions and citations in research papers.")
 
