@@ -25,25 +25,28 @@ def load_prompt_template():
 console = Console()
 
 def print_json_as_table(json_data, step_number):
+    table = Table(title=f"Step {step_number} - JSON Output")
+
+    rows = []
     if isinstance(json_data, dict):
-        table = Table(title=f"Step {step_number} - JSON Output")
-        table.add_column("Key")
-        table.add_column("Value")
-        for key, value in json_data.items():
-            value_str = json.dumps(value, indent=2) if isinstance(value, (dict, list)) else str(value)
-            table.add_row(str(key), value_str)
-        console.print(table)
+        keys = ["Key", "Value"]
+        rows = [[str(k), json.dumps(v, indent=2) if isinstance(v, (dict, list)) else str(v)] for k, v in json_data.items()]
     elif isinstance(json_data, list) and all(isinstance(row, dict) for row in json_data):
         keys = sorted(set(k for d in json_data for k in d.keys()))
-        table = Table(title=f"Step {step_number} - JSON Output")
-        for key in keys:
-            table.add_column(str(key))
         for item in json_data:
-            table.add_row(*(str(item.get(k, "")) for k in keys))
-        console.print(table)
+            rows.append([str(item.get(k, "")) for k in keys])
     else:
         logger.info("✅ JSON content (non-tabular):")
         logger.info(json.dumps(json_data, indent=2))
+        return
+
+    for key in keys:
+        table.add_column(key)
+
+    for row in rows:
+        table.add_row(*row)
+
+    console.print(table)
 
 def extract_and_check_software(body_text, bibliography_text, pdf_filename, provider, model, save_report=False, client=None):
     os.makedirs("reports", exist_ok=True)
