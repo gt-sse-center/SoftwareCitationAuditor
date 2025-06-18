@@ -1,4 +1,4 @@
-# softwarecitationauditor
+# Software Citation Auditor
 
 **softwarecitationauditor** is a Python command-line tool to extract software mentions from research papers (PDFs) and check whether they are properly cited, using structured LLM queries — supporting OpenAI, Claude, Gemini, and Ollama.
 
@@ -56,12 +56,12 @@ https://arxiv.org/pdf/2305.67890.pdf
 
 ---
 
-## 🤖 Model Support
+## 🤖 Model Support (OpenAI, Claude, Gemini, Ollama)
 
 You can switch providers and models using:
 
 ```
---provider [openai|claude|gemini] --model [model_name]
+--provider [openai|claude|gemini|ollama] --model [model_name]
 ```
 
 ### Examples:
@@ -96,12 +96,9 @@ You can switch providers and models using:
 
 ## ✍️ Custom Prompt
 
-The tool uses a `prompt.in` file with clearly defined multi-step prompts. Each step must return only a valid JSON object, with no markdown or extra explanation.
+The tool uses a `prompt.in` file with clearly defined multi-step prompts. Each step must return valid JSON only, without Markdown or prose.
 
-Each step is separated by:
-```
---- step N ---
-```
+Each step is separated by: `--- step N ---`
 
 Example:
 
@@ -134,8 +131,9 @@ This format ensures predictable parsing and reliable multi-step model execution.
 
 ## 📁 Output
 
-- Downloaded PDFs → `downloads/` folder
-- Reports → `reports/` folder (`<pdf-id>_report.md`)
+- Downloaded PDFs → `downloads/` folder  
+- Reports are saved only if `--save-report` is enabled. Output files are stored as:  
+  `reports/` folder (`<pdf-id>_report.md`)
 
 ---
 
@@ -146,7 +144,7 @@ This tool breaks down the analysis into multiple LLM steps:
 - Step 2: Check if each tool is cited in the bibliography
 - Step 3: Suggest missing citations for uncited tools
 
-Each step is designed to produce clean structured JSON output and is handled sequentially via the selected model provider.
+Each step's result is logged and pretty-printed with structured formatting. If JSON parsing fails, raw output is shown with a warning.
 
 ---
 
@@ -160,6 +158,12 @@ export ANTHROPIC_API_KEY=xx-xxxxxx
 export GEMINI_API_KEY=xx-xxxxxx
 ```
 
+Install or run Ollama models:
+
+```
+ollama run llama3  # or install if not pulled
+```
+
 ---
 
 ## 🧪 Running Tests
@@ -168,6 +172,8 @@ export GEMINI_API_KEY=xx-xxxxxx
 uv pip install --editable .[test]
 pytest
 ```
+
+Unit tests include CLI and provider-level mocks. See `tests/test_provider.py` and `tests/test_main.py`.
 
 ---
 
@@ -179,11 +185,18 @@ softwarecitationauditor/
 ├── main.py
 ├── downloader.py
 ├── extractor.py
-├── openai_checker.py
+├── checker.py
+├── providers.py
 ├── prompt.in
+└── utils/
+    ├── __init__.py
+    └── logger.py
 downloads/
 reports/
 tests/
+├── test_main.py
+├── test_checker.py
+└── test_provider.py
 ```
 
 ---
@@ -195,4 +208,5 @@ MIT License
 ---
 
 ⚠️ **Disclaimer:**  
-Claude and Gemini integration is experimental. API formats may change; test carefully before production use.
+Claude and Gemini integration is experimental. API formats may change; test carefully before production use.  
+All non-OpenAI providers are currently considered beta integrations.
