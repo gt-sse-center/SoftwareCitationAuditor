@@ -1,2 +1,53 @@
+### Step 1: Extract Software Mentions
+
+Below is the body of an academic paper. Extract all mentions of software tools, libraries, packages, or platforms that are likely used in the research.
+
 {{BODY_TEXT}}
-Can you extract which softwares are used in this paper and if they are properly cited? Return the result only as a Markdown table with columns: Software, Citation Provided?, Reference ID(s)
+
+You must return only a valid JSON object with no explanation, preamble, or formatting outside the JSON. Do not include markdown formatting (like triple backticks), introductory phrases, or explanations. Just output the JSON object directly. The JSON must be parsable by a standard JSON parser.
+{
+  "software_mentions": ["ToolA", "LibraryB", "PlatformC"]
+}
+
+---SPLIT STEP---
+
+### Step 2: Analyze Citations
+
+Here is the bibliography or references section of the paper:
+
+{{BIBLIOGRAPHY_TEXT}}
+
+Given the following list of software mentioned in the paper:
+
+{{STEP1_RESULT}}
+
+For each software, check whether a citation is provided in the bibliography. You must return only a valid JSON object with no explanation, preamble, or formatting outside the JSON. Do not include markdown formatting (like triple backticks), introductory phrases, or explanations. Just output the JSON object directly. The JSON must be parsable by a standard JSON parser.
+{
+  "citation_analysis": [
+    {
+      "software": "ToolA",
+      "cited": true,
+      "reference_ids": ["[2]", "[5]"]
+    },
+    {
+      "software": "LibraryB",
+      "cited": false,
+      "reference_ids": []
+    }
+  ]
+}
+
+---SPLIT STEP---
+
+### Step 3: Suggest Missing Citations
+
+Based on the citation analysis:
+
+{{STEP2_RESULT}}
+
+Identify all software entries where a citation was not provided. For each of these, suggest a proper citation that could be added to the paper. Provide the citation as a BibTeX entry. You must return only a valid JSON object with no explanation, preamble, or formatting outside the JSON. Do not include markdown formatting (like triple backticks), introductory phrases, or explanations. Just output the JSON object directly. The JSON must be parsable by a standard JSON parser.
+{
+  "suggested_citations": {
+    "LibraryB": "@misc{libraryb2023, title={LibraryB: An Example Tool}, author={Author, A.}, year={2023}, url={https://example.com/libraryb}}"
+  }
+}

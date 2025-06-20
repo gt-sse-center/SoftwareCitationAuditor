@@ -1,7 +1,6 @@
+# Software Citation Auditor
 
-# softwarecitationauditor
-
-**softwarecitationauditor** is a Python command-line tool to extract software mentions from research papers (PDFs) and check whether they are properly cited, using the OpenAI API — with **experimental support** for Claude and Gemini.
+**softwarecitationauditor** is a Python command-line tool to extract software mentions from research papers (PDFs) and check whether they are properly cited, using structured LLM queries — supporting OpenAI, Claude, Gemini, and Ollama.
 
 ---
 
@@ -57,12 +56,12 @@ https://arxiv.org/pdf/2305.67890.pdf
 
 ---
 
-## ⚡ Experimental: Using Other Models
+## 🤖 Model Support (OpenAI, Claude, Gemini, Ollama)
 
 You can switch providers and models using:
 
 ```
---provider [openai|claude|gemini] --model [model_name]
+--provider [openai|claude|gemini|ollama] --model [model_name]
 ```
 
 ### Examples:
@@ -97,10 +96,15 @@ You can switch providers and models using:
 
 ## ✍️ Custom Prompt
 
-Edit the `prompt.in` file in the `softwarecitationauditor` folder:
+The tool uses a `prompt.in` file with clearly defined multi-step prompts. Each step must return valid JSON only, without Markdown or prose.
+
+Each step is separated by: `--- step N ---`
+
+Example:
 
 ```
-Given the following paper body and bibliography, extract the software tools used in the paper and check if they are properly cited.
+--- step 1 ---
+Given the following paper body and bibliography, identify all software tools mentioned in the body. Return only a JSON list of software tool names.
 
 Body:
 {{BODY_TEXT}}
@@ -108,15 +112,39 @@ Body:
 Bibliography:
 {{BIBLIOGRAPHY_TEXT}}
 
-Return the result as a Markdown table with columns: Software, Mentioned, Properly Cited.
+Return only a valid JSON array like: ["Tool1", "Tool2", ...]
+Do not include markdown formatting or explanations.
+
+--- step 2 ---
+For each software tool identified in Step 1, check if it appears in the bibliography. Return a JSON list of objects with fields: name, cited (true/false), and reason.
+
+Use the same Body and Bibliography as Step 1.
+Return only a valid JSON list of objects.
+
+--- step 3 ---
+For all software tools where cited is false, generate a suggested BibTeX entry. Return a JSON list of objects with name and bibtex fields.
 ```
+
+This format ensures predictable parsing and reliable multi-step model execution.
 
 ---
 
 ## 📁 Output
 
-- Downloaded PDFs → `downloads/` folder
-- Reports → `reports/` folder (`<pdf-id>_report.md`)
+- Downloaded PDFs → `downloads/` folder  
+- Reports are saved only if `--save-report` is enabled. Output files are stored as:  
+  `reports/` folder (`<pdf-id>_report.md`)
+
+---
+
+### 🧠 Multi-Step Reasoning
+
+This tool breaks down the analysis into multiple LLM steps:
+- Step 1: Identify software tools mentioned
+- Step 2: Check if each tool is cited in the bibliography
+- Step 3: Suggest missing citations for uncited tools
+
+Each step's result is logged and pretty-printed with structured formatting. If JSON parsing fails, raw output is shown with a warning.
 
 ---
 
@@ -130,6 +158,12 @@ export ANTHROPIC_API_KEY=xx-xxxxxx
 export GEMINI_API_KEY=xx-xxxxxx
 ```
 
+Install or run Ollama models:
+
+```
+ollama run llama3  # or install if not pulled
+```
+
 ---
 
 ## 🧪 Running Tests
@@ -138,6 +172,8 @@ export GEMINI_API_KEY=xx-xxxxxx
 uv pip install --editable .[test]
 pytest
 ```
+
+Unit tests include CLI and provider-level mocks. See `tests/test_provider.py` and `tests/test_main.py`.
 
 ---
 
@@ -149,11 +185,18 @@ softwarecitationauditor/
 ├── main.py
 ├── downloader.py
 ├── extractor.py
-├── openai_checker.py
+├── checker.py
+├── providers.py
 ├── prompt.in
+└── utils/
+    ├── __init__.py
+    └── logger.py
 downloads/
 reports/
 tests/
+├── test_main.py
+├── test_checker.py
+└── test_provider.py
 ```
 
 ---
@@ -165,4 +208,5 @@ MIT License
 ---
 
 ⚠️ **Disclaimer:**  
-Claude and Gemini integration is experimental. API formats may change; test carefully before production use.
+Claude and Gemini integration is experimental. API formats may change; test carefully before production use.  
+All non-OpenAI providers are currently considered beta integrations.
