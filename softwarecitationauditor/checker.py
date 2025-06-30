@@ -53,7 +53,7 @@ def print_json_as_table(json_data, step_number):
 def extract_and_check_software(body_text, bibliography_text, pdf_filename, provider, model, save_report=False, client=None):
     os.makedirs("reports", exist_ok=True)
     base_name = os.path.splitext(os.path.basename(pdf_filename))[0]
-    report_name = os.path.join("reports", f"{base_name}_report.md")
+    report_name = os.path.join("reports", f"{base_name}_report.json")
 
     prompt_template = load_prompt_template()
     templates = prompt_template.split("---SPLIT STEP---")
