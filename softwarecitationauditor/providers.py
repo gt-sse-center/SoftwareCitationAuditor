@@ -25,7 +25,7 @@ class OpenAIProvider(LLMProvider):
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
+                temperature=0.0,
             )
             return response.choices[0].message.content.strip()
         except OpenAIAuthError as e:
