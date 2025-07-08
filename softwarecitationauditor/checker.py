@@ -50,6 +50,17 @@ def print_json_as_table(json_data, step_number):
 
     console.print(table)
 
+def _citation_keys(json_str):
+    """Extract the set of software keys from the suggested_citations section."""
+    try:
+        data = json.loads(json_str)
+        sc = data.get("suggested_citations", {})
+        if isinstance(sc, dict):
+            return set(sc.keys())
+    except Exception:
+        pass
+    return None
+
 def extract_and_check_software(body_text, bibliography_text, pdf_filename, provider, model, save_report=False, client=None):
     os.makedirs("reports", exist_ok=True)
     base_name = os.path.splitext(os.path.basename(pdf_filename))[0]
@@ -59,6 +70,8 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
     templates = prompt_template.split("---SPLIT STEP---")
 
     history = []
+    all_attempts = []
+
 
     if provider == "openai":
         llm = OpenAIProvider(model, client)
@@ -84,9 +97,26 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
             formatted_prompt = formatted_prompt.replace(f"{{{{STEP{i}_RESULT}}}}", f"\n```json\n{safe_json}\n```\n")
 
         logger.info(f"🚀 Step {step_number}/{len(templates)}: Executing prompt step...")
-        result = llm.generate(formatted_prompt)
-        logger.debug(f"Raw result for step {step_number}:\n{result}")
+        attempts = []
+        while True:
+            attempt_num = len(attempts) + 1
+            logger.info(f"   ➡️  LLM attempt {attempt_num} for step {step_number}")
+            result = llm.generate(formatted_prompt)
+            attempts.append(result)
 
+            if len(attempts) >= 2:
+                prev_keys = _citation_keys(attempts[-2])
+                curr_keys = _citation_keys(attempts[-1])
+                if prev_keys is not None and curr_keys is not None and prev_keys == curr_keys:
+                    logger.info("   ✅ Consecutive attempts produced the same citation keys. Moving on.")
+                    break
+
+            if len(attempts) >= 5:
+                logger.info("   ⚠️  Reached 5 attempts without consensus. Continuing with latest result.")
+                break
+            logger.debug(f"Raw result for step {step_number}:\n{result}")
+
+        all_attempts.append(attempts)
         history.append(result)
         try:
             parsed_json = json.loads(result)
@@ -101,3 +131,10 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
         with open(report_name, "w") as f:
             f.write(history[-1])
         logger.info(f"✅ Report generated: {report_name}")
+
+    final_json = None
+    try:
+        final_json = json.loads(history[-1])
+    except Exception:
+        logger.warning("Final step result is not valid JSON")
+    return {"attempts": all_attempts, "result": final_json}
