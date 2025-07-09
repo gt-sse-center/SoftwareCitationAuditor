@@ -70,8 +70,6 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
     templates = prompt_template.split("---SPLIT STEP---")
 
     history = []
-    all_attempts = []
-
 
     if provider == "openai":
         llm = OpenAIProvider(model, client)
@@ -116,7 +114,6 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
                 break
             logger.debug(f"Raw result for step {step_number}:\n{result}")
 
-        all_attempts.append(attempts)
         history.append(result)
         try:
             parsed_json = json.loads(result)
@@ -137,4 +134,4 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
         final_json = json.loads(history[-1])
     except Exception:
         logger.warning("Final step result is not valid JSON")
-    return {"attempts": all_attempts, "result": final_json}
+    return {"attempts": attempts, "result": final_json}
