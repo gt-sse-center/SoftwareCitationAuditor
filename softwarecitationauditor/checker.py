@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from typing import List
 from colorama import Fore, Style, init as colorama_init
 from rich.console import Console
 from rich.table import Table
@@ -95,7 +96,7 @@ def extract_and_check_software(body_text, bibliography_text, pdf_filename, provi
             formatted_prompt = formatted_prompt.replace(f"{{{{STEP{i}_RESULT}}}}", f"\n```json\n{safe_json}\n```\n")
 
         logger.info(f"🚀 Step {step_number}/{len(templates)}: Executing prompt step...")
-        attempts = []
+        attempts: List[str] = []
         while True:
             attempt_num = len(attempts) + 1
             logger.info(f"   ➡️  LLM attempt {attempt_num} for step {step_number}")
